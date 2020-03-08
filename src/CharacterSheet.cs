@@ -6,68 +6,16 @@ namespace Thalins.PMDnD
 {
     class CharacterSheet
     {
-        [Flags] public enum Section
-        {
-            ALL = MAIN_INFO | STATS | COMBAT_STATS | MISC_INFO,
-
-            MAIN_INFO   = 0b111111,
-            INFO        = 1 << 0,
-            TYPES       = 1 << 1,
-            ACTIONS     = 1 << 2,
-            HEALTH      = 1 << 3,
-            STATUS      = 1 << 4,
-            POKE        = 1 << 5,
-
-            STATS       = 0b1111 << 6,
-            STRENGTH    = 1 << 6,
-            SPECIAL     = 1 << 7,
-            SPEED       = 1 << 8,
-            VITALITY    = 1 << 9,
-
-            COMBAT_STATS    = 0b111 << 10,
-            ACCURACY        = 1 << 10,
-            EVASION         = 1 << 11,
-            DEFENSE         = 1 << 12,
-
-            MISC_INFO       = 0b11111 << 13,
-            INVENTORY       = 1 << 13,
-            TYPE_EFFECT     = 1 << 14,
-            PROFICIENCIES   = 1 << 15,
-            MOVES           = 1 << 16,
-            SPELLS          = 1 << 17
-        }
-
-        private string _sheetName;
-
         public struct Stat
         {
-            private int _base;
-            public int Base
-            {
-                get { return _boost; }
-                private set { Update(value, _boost, _buff); }
-            }
-            private int _boost;
-            public int Boost
-            {
-                get { return _boost; }
-                set { Update(_base, value, _buff); }
-            }
-            private int _buff;
-            public int Buff
-            {
-                get { return _buff; }
-                set { Update(_base, _boost, value); }
-            }
+            public int Base { get => _base; set => Update(value, _boost, _buff); }
+            public int Boost { get => _boost; set => Update(_base, value, _buff); }
+            public int Buff { get => _buff; set => Update(_base, _boost, value); }
             public int Total { get; private set; }
 
-            public Stat(int baseStat, int boostStat = 0, int buffStat = 0)
-            {
-                _base = baseStat;
-                _boost = boostStat;
-                _buff = buffStat;
-                Total = _base + _boost + _buff;
-            }
+            private int _base;
+            private int _boost;
+            private int _buff;
 
             private void Update(int baseStat, int boostStat, int buffStat)
             {
@@ -78,33 +26,165 @@ namespace Thalins.PMDnD
             }
         }
 
-        public string Player { get; private set; }
-        public string Name { get; private set; }
-        public string Species { get; set; }
-        public Stat Strength { get; private set; }
-        public Stat Special { get; private set; }
-        public Stat Speed { get; private set; }
-        public Stat Vitality { get; private set; }
-
-        CharacterSheet(string sheetName)
+        public struct Proficiency
         {
-            _sheetName = sheetName;
-            
+            public string Name;
+            public int Level { get => _level; set => Update(value, _buff); }
+            public int Buff { get => _buff; set => Update(_level, value); }
+            public int Total { get; private set; }
+            public int Exp;
+            public int MaxExp;
 
+            private int _level;
+            private int _buff;
+
+            private void Update(int level, int buff)
+            {
+                _level = level;
+                _buff = buff;
+                Total = _level + _buff;
+            }
         }
 
-        public void UpdateRead(Section updateSection = Section.ALL)
+        public struct Skill
         {
-            List<string> ranges = new List<string>();
-            if ((updateSection & Section.INFO) != 0)
+            public string Name;
+            public string Type;
+            public int Accuracy;
+            public int Damage;
+            public string Effect;
+        }
+
+        public string Name;
+        public string Player;
+        public string Gender;
+        public string Species;
+        public string Class;
+        public string Type1;
+        public string Type2;
+        public string Ability;
+
+        public int HP;
+        public int MaxHP;
+        public int Level;
+        public int ActionsBase;
+        public int ActionsBuff;
+        public float ActionsStatus;
+        public int Actions;
+        public int Money;
+
+        public Stat Strength;
+        public Stat Special;
+        public Stat Speed;
+        public Stat Vitality;
+
+        public Stat Accuracy;
+        public Stat Evasion;
+        public Stat Defense;
+
+        public Dictionary<string, int> Statuses;
+        public Dictionary<string, int> Inventory;
+
+        public Dictionary<string, Proficiency> Proficiencies;
+
+        public Dictionary<string, Skill> Moves;
+        public Dictionary<string, Skill> Spells;
+
+        public CharacterSheet(string name)
+        {
+            Console.WriteLine("Creating new character \"{0}\"...", name);
+            Name = name;
+
+            List<string> stringRanges = new List<string>
             {
-                ranges.Add(_sheetName + "!" + Sheets.Ranges.Name);
-                ranges.Add(Sheets.Ranges.Player);
-                ranges.Add(Sheets.Ranges.Species);
-                ranges.Add(Sheets.Ranges.Gender);
-                ranges.Add(Sheets.Ranges.Level);
-                ranges.Add(Sheets.Ranges.Ability);
-            }
+                Name + "!" + Sheets.StandardRanges.Player,
+                Name + "!" + Sheets.StandardRanges.Gender,
+                Name + "!" + Sheets.StandardRanges.Species,
+                Name + "!" + Sheets.StandardRanges.Class,
+                Name + "!" + Sheets.StandardRanges.Type1,
+                Name + "!" + Sheets.StandardRanges.Type2,
+                Name + "!" + Sheets.StandardRanges.Ability
+            };
+            List<string> numberRanges = new List<string>
+            {
+                Name + "!" + Sheets.StandardRanges.HP,
+                Name + "!" + Sheets.StandardRanges.MaxHP,
+                Name + "!" + Sheets.StandardRanges.Level,
+                Name + "!" + Sheets.StandardRanges.Actions.Base,
+                Name + "!" + Sheets.StandardRanges.Actions.Buff,
+                Name + "!" + Sheets.StandardRanges.Actions.Status,
+                Name + "!" + Sheets.StandardRanges.Actions.Total,
+                Name + "!" + Sheets.StandardRanges.Money,
+
+                Name + "!" + Sheets.StandardRanges.Strength.Base,
+                Name + "!" + Sheets.StandardRanges.Strength.Boost,
+                Name + "!" + Sheets.StandardRanges.Strength.Buff,
+                Name + "!" + Sheets.StandardRanges.Special.Base,
+                Name + "!" + Sheets.StandardRanges.Special.Boost,
+                Name + "!" + Sheets.StandardRanges.Special.Buff,
+                Name + "!" + Sheets.StandardRanges.Speed.Base,
+                Name + "!" + Sheets.StandardRanges.Speed.Boost,
+                Name + "!" + Sheets.StandardRanges.Speed.Buff,
+                Name + "!" + Sheets.StandardRanges.Vitality.Base,
+                Name + "!" + Sheets.StandardRanges.Vitality.Boost,
+                Name + "!" + Sheets.StandardRanges.Vitality.Buff,
+
+                Name + "!" + Sheets.StandardRanges.Accuracy.Equip,
+                Name + "!" + Sheets.StandardRanges.Accuracy.Buff,
+                Name + "!" + Sheets.StandardRanges.Accuracy.Debuff,
+                Name + "!" + Sheets.StandardRanges.Evasion.Equip,
+                Name + "!" + Sheets.StandardRanges.Evasion.Buff,
+                Name + "!" + Sheets.StandardRanges.Evasion.Debuff,
+                Name + "!" + Sheets.StandardRanges.Defense.Base,
+                Name + "!" + Sheets.StandardRanges.Defense.Equip,
+                Name + "!" + Sheets.StandardRanges.Defense.Buff
+            };
+
+            List<string> ranges = new List<string>();
+            stringRanges.ForEach((range) => ranges.Add(range));
+            numberRanges.ForEach((range) => ranges.Add(range));
+
+            var values = Sheets.GetFromSheet(ranges);
+
+            Player  = values[stringRanges[0]];
+            Gender  = values[stringRanges[1]];
+            Species = values[stringRanges[2]];
+            Class   = values[stringRanges[3]];
+            Type1   = values[stringRanges[4]];
+            Type2   = values[stringRanges[5]];
+            Ability = values[stringRanges[6]];
+
+            HP              = int.Parse(values[numberRanges[0]]);
+            MaxHP           = int.Parse(values[numberRanges[1]]);
+            Level           = int.Parse(values[numberRanges[2]]);
+            ActionsBase     = int.Parse(values[numberRanges[3]]);
+            ActionsBuff     = int.Parse(values[numberRanges[4]]);
+            ActionsStatus   = float.Parse(values[numberRanges[5]]);
+            Actions         = int.Parse(values[numberRanges[6]]);
+            Money           = int.Parse(values[numberRanges[7]]);
+
+            Strength.Base   = int.Parse(values[numberRanges[8]]);
+            Strength.Boost  = int.Parse(values[numberRanges[9]]);
+            Strength.Buff   = int.Parse(values[numberRanges[10]]);
+            Special.Base    = int.Parse(values[numberRanges[11]]);
+            Special.Boost   = int.Parse(values[numberRanges[12]]);
+            Special.Buff    = int.Parse(values[numberRanges[13]]);
+            Speed.Base      = int.Parse(values[numberRanges[14]]);
+            Speed.Boost     = int.Parse(values[numberRanges[15]]);
+            Speed.Buff      = int.Parse(values[numberRanges[16]]);
+            Vitality.Base   = int.Parse(values[numberRanges[17]]);
+            Vitality.Boost  = int.Parse(values[numberRanges[18]]);
+            Vitality.Buff   = int.Parse(values[numberRanges[19]]);
+
+            Accuracy.Base   = int.Parse(values[numberRanges[20]]);
+            Accuracy.Boost  = int.Parse(values[numberRanges[21]]);
+            Accuracy.Buff   = int.Parse(values[numberRanges[22]]);
+            Evasion.Base    = int.Parse(values[numberRanges[23]]);
+            Evasion.Boost   = int.Parse(values[numberRanges[24]]);
+            Evasion.Buff    = int.Parse(values[numberRanges[25]]);
+            Defense.Base    = int.Parse(values[numberRanges[26]]);
+            Defense.Boost   = int.Parse(values[numberRanges[27]]);
+            Defense.Buff    = int.Parse(values[numberRanges[28]]);
         }
     }
 }

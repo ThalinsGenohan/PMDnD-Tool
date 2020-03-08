@@ -13,7 +13,25 @@ namespace Thalins.PMDnD
 {
     static class Sheets
     {
-        public static class Ranges
+        public class Data
+        {
+            public string Name { get; private set; }
+            public string Position { get; private set; }
+            public string Group { get; private set; }
+            public string Type { get; private set; }
+
+            public Data(string name, string position, string group = "", string type = "")
+            {
+                Name = name;
+                Position = position;
+                Group = group;
+                Type = type;
+            }
+        }
+
+        public static Dictionary<string, Data> Ranges;
+
+        public static class StandardRanges
         {
             public static string Gender;
             public static string Image;
@@ -33,6 +51,7 @@ namespace Thalins.PMDnD
             {
                 public static string Base;
                 public static string Buff;
+                public static string Status;
                 public static string Total;
             }
             public static string Ability;
@@ -87,6 +106,7 @@ namespace Thalins.PMDnD
                 public static string Total;
             }
             public static string Money;
+            public static string Class;
 
             public static void Initialize(IList<IList<Object>> values)
             {
@@ -94,20 +114,63 @@ namespace Thalins.PMDnD
                 List<string> ranges = new List<string>();
                 for (var i = 0; i < values.Count; i++)
                 {
-                    ranges.Add(values[i][0].ToString());
-                    Console.WriteLine("{0} - {1}%", ranges[i], (float)i / values.Count * 100);
+                    ranges.Add(values[i][1].ToString());
+                    Console.WriteLine("{0}: {1} - {2}", i, values[i][0], ranges[i]);
                 }
-                var index = 0;
-                Gender = ranges[index++];
-                Image = ranges[index++];
-                Player = ranges[index++];
-                Status = ranges[index++];
-                HP = ranges[index++];
-                MaxHP = ranges[index++];
-                HPBar = ranges[index++];
-                Name = ranges[index++];
-                Species = ranges[index++];
+                Gender =            ranges[0];
+                Image =             ranges[1];
+                Player =            ranges[2];
+                Status =            ranges[3];
+                HP =                ranges[4];
+                MaxHP =             ranges[5];
+                HPBar =             ranges[6];
+                Name =              ranges[7];
+                Species =           ranges[8];
+                Type1 =             ranges[9];
 
+                Type2 =             ranges[10];
+                TypeIcon1 =         ranges[11];
+                TypeIcon2 =         ranges[12];
+                Level =             ranges[13];
+                Actions.Base =      ranges[14];
+                Actions.Buff =      ranges[15];
+                Actions.Status =    ranges[16];
+                Actions.Total =     ranges[17];
+                Ability =           ranges[18];
+                Exp =               ranges[19];
+
+                Strength.Base =     ranges[20];
+                Strength.Boost =    ranges[21];
+                Strength.Buff =     ranges[22];
+                Strength.Total =    ranges[23];
+                Special.Base =      ranges[24];
+                Special.Boost =     ranges[25];
+                Special.Buff =      ranges[26];
+                Special.Total =     ranges[27];
+                Speed.Base =        ranges[28];
+                Speed.Boost =       ranges[29];
+
+                Speed.Buff =        ranges[30];
+                Speed.Total =       ranges[31];
+                Vitality.Base =     ranges[32];
+                Vitality.Boost =    ranges[33];
+                Vitality.Buff =     ranges[34];
+                Vitality.Total =    ranges[35];
+                Accuracy.Equip =    ranges[36];
+                Accuracy.Buff =     ranges[37];
+                Accuracy.Debuff =   ranges[38];
+                Accuracy.Total =    ranges[39];
+
+                Evasion.Equip =     ranges[40];
+                Evasion.Buff =      ranges[41];
+                Evasion.Debuff =    ranges[42];
+                Evasion.Total =     ranges[43];
+                Defense.Base =      ranges[44];
+                Defense.Equip =     ranges[45];
+                Defense.Buff =      ranges[46];
+                Defense.Total =     ranges[47];
+                Money =             ranges[48];
+                Class =             ranges[49];
             }
         }
 
@@ -140,10 +203,15 @@ namespace Thalins.PMDnD
             });
 
             SpreadsheetsResource.ValuesResource.GetRequest initRequest =
-                Service.Spreadsheets.Values.Get(SpreadsheetId, "RANGE_CONSTANTS");
+                Service.Spreadsheets.Values.Get(SpreadsheetId, "DATA_CONSTANTS");
             ValueRange initResponse = initRequest.Execute();
 
-            Ranges.Initialize(initResponse.Values);
+            StandardRanges.Initialize(initResponse.Values);
+
+            //foreach (var row in initResponse.Values)
+            //{
+            //    //Ranges.Add(row[0].ToString(), new Data(row[0].ToString(), row[1].ToString(), row[2].ToString(), row[3].ToString()));
+            //}
         }
 
         public static IList<IList<object>> GetFromSheet(string range, bool dmSheet = false)
@@ -154,14 +222,26 @@ namespace Thalins.PMDnD
             return response.Values;
         }
 
-        public static IList<object> GetFromSheet(List<string> ranges)
+        public static Dictionary<string, string> GetFromSheet(List<string> ranges)
         {
             SpreadsheetsResource.ValuesResource.BatchGetRequest request =
                 Service.Spreadsheets.Values.BatchGet(SpreadsheetId);
             request.Ranges = ranges;
             var response = request.Execute();
-            foreach ()
-            return response.Values;
+
+            Dictionary<string, string> values = new Dictionary<string, string>();
+
+            int i = 0;
+            foreach (var range in response.ValueRanges)
+            {
+                foreach (var value in range.Values)
+                {
+                    values.Add(ranges[i], value[0].ToString());
+                    i++;
+                }
+            }
+
+            return values;
         }
     }
 }
