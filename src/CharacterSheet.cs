@@ -38,6 +38,16 @@ namespace Thalins.PMDnD
             private int _level;
             private int _buff;
 
+            public Proficiency(string name, int level, int buff, int exp = 0)
+            {
+                Name = name;
+                _level = level;
+                _buff = buff;
+                Total = level + buff;
+                Exp = exp;
+                MaxExp = level * 5;
+            }
+
             private void Update(int level, int buff)
             {
                 _level = level;
@@ -53,6 +63,15 @@ namespace Thalins.PMDnD
             public int Accuracy;
             public int Damage;
             public string Effect;
+
+            public Skill(string name, string type, int accuracy, int damage, string effect)
+            {
+                Name = name;
+                Type = type;
+                Accuracy = accuracy;
+                Damage = damage;
+                Effect = effect;
+            }
         }
 
         public string Name;
