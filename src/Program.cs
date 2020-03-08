@@ -15,8 +15,6 @@ namespace Thalins.PMDnD
     {
         private static void Main()
         {
-            UI.Run();
-
             Config.Load();
             Sheets.Initialize(Config.SpreadsheetID);
             CharacterSheet Template = new CharacterSheet("Template");
