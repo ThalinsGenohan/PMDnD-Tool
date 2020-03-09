@@ -13,6 +13,9 @@ namespace Thalins.PMDnD
 {
     static class Sheets
     {
+        const string credentialsFile = "credentials.json";
+        const string credentialsHelp = "";
+
         public class Data
         {
             public string Name { get; private set; }
@@ -29,7 +32,7 @@ namespace Thalins.PMDnD
             }
         }
 
-        public static Dictionary<string, Data> Ranges;
+        public static Dictionary<string, Data> Ranges = new Dictionary<string, Data>();
 
         public static class StandardRanges
         {
@@ -184,6 +187,12 @@ namespace Thalins.PMDnD
         {
             SpreadsheetId = spreadsheetId;
             DmSpreadsheetId = dmSpreadsheetId;
+
+            if (!File.Exists("credentials.json"))
+            {
+                Console.WriteLine("ERROR! File \"{0}\" not found! Please add your Google credentials file. Instructions can be found at {1}", credentialsFile, credentialsHelp);
+            }
+
             using (var stream =
                 new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
             {
