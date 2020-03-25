@@ -7,11 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PMDnD Tool", "src\PMDnD Too
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BE32B432-AF89-4E55-BFD1-D7DC37BEE441}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		config.json = config.json
-		credentials.json = credentials.json
 		README.md = README.md
 	EndProjectSection
 EndProject
