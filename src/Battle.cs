@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿//
+//
 
 namespace Thalins.PMDnD
 {
-    static class Battle
+    using System;
+    using System.Collections.Generic;
+
+    internal static class Battle
     {
         public static List<KeyValuePair<CharacterSheet, int>> Initiative = new List<KeyValuePair<CharacterSheet, int>>();
 
