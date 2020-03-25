@@ -11,10 +11,10 @@ using System.Threading;
 
 namespace Thalins.PMDnD
 {
-    static class Sheets
+    internal static class Sheets
     {
-        const string credentialsFile = "credentials.json";
-        const string credentialsHelp = "";
+        private const string credentialsFile = "credentials.json";
+        private const string credentialsHelp = "";
 
         public class Data
         {
@@ -183,7 +183,7 @@ namespace Thalins.PMDnD
         private static string SpreadsheetId;
         private static string DmSpreadsheetId;
 
-        public static void Initialize(string spreadsheetId, string dmSpreadsheetId = "")
+        public static bool Initialize(string spreadsheetId, string dmSpreadsheetId = "")
         {
             SpreadsheetId = spreadsheetId;
             DmSpreadsheetId = dmSpreadsheetId;
@@ -191,6 +191,7 @@ namespace Thalins.PMDnD
             if (!File.Exists("credentials.json"))
             {
                 Console.WriteLine("ERROR! File \"{0}\" not found! Please add your Google credentials file. Instructions can be found at {1}", credentialsFile, credentialsHelp);
+                return false;
             }
 
             using (var stream =
@@ -221,6 +222,8 @@ namespace Thalins.PMDnD
             //{
             //    //Ranges.Add(row[0].ToString(), new Data(row[0].ToString(), row[1].ToString(), row[2].ToString(), row[3].ToString()));
             //}
+
+            return true;
         }
 
         public static IList<IList<object>> GetFromSheet(string range, bool dmSheet = false)
@@ -243,6 +246,7 @@ namespace Thalins.PMDnD
             int i = 0;
             foreach (var range in response.ValueRanges)
             {
+                if (range.Values == null) continue;
                 foreach (var value in range.Values)
                 {
                     values.Add(ranges[i], value[0].ToString());
