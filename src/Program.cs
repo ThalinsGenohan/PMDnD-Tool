@@ -1,25 +1,22 @@
-﻿using Google.Apis.Auth.OAuth2;
-using Google.Apis.Sheets.v4;
-using Google.Apis.Sheets.v4.Data;
-using Google.Apis.Services;
-using Google.Apis.Util.Store;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using Thalins.PMDnD;
 
 namespace Thalins.PMDnD
 {
-    class Program
+    internal class Program
     {
         private static void Main()
         {
-            Config.Load();
-            Sheets.Initialize(Config.SpreadsheetID);
-            CharacterSheet Template = new CharacterSheet("Template");
+            /*if (!Config.Load() || !Sheets.Initialize(Config.SpreadsheetID))
+            {
+                return;
+            }
+            /*CharacterSheet Template = new CharacterSheet("Template");
             CharacterSheet Template2 = new CharacterSheet("Template 2");
-            Battle.Start(new List<CharacterSheet> { Template, Template2 });
+            Battle.Start(new List<CharacterSheet> { Template, Template2 });*/
+
+            UI ui = new UI();
+            ui.Run();
         }
 
         //static void OldMain(string[] args)
