@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Thalins.PMDnD
 {
-    class CharacterSheet
+    internal class CharacterSheet
     {
         public struct Stat
         {
@@ -101,13 +101,13 @@ namespace Thalins.PMDnD
         public Stat Evasion;
         public Stat Defense;
 
-        public Dictionary<string, int> Statuses;
-        public Dictionary<string, int> Inventory;
+        public Dictionary<string, int> Statuses = new Dictionary<string, int>();
+        public Dictionary<string, int> Inventory = new Dictionary<string, int>();
 
-        public Dictionary<string, Proficiency> Proficiencies;
+        public Dictionary<string, Proficiency> Proficiencies = new Dictionary<string, Proficiency>();
 
-        public Dictionary<string, Skill> Moves;
-        public Dictionary<string, Skill> Spells;
+        public Dictionary<string, Skill> Moves = new Dictionary<string, Skill>();
+        public Dictionary<string, Skill> Spells = new Dictionary<string, Skill>();
 
         public CharacterSheet(string name)
         {
